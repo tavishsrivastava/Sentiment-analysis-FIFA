@@ -1,3 +1,9 @@
+# Input tweets for the 4 teams with an additinal tag of FIFA
+
+library(twitteR)
+library(ROAuth)
+library(ggplot2)
+
 ARG.list <- searchTwitter('#ARG #FIFA', n=1000, cainfo="cacert.pem")  
 ARG.df = twListToDF(ARG.list)  
 
@@ -11,9 +17,10 @@ GER.df = twListToDF(GER.list)
 NED.list <- searchTwitter('#NED #FIFA', n=1000, cainfo="cacert.pem")  
 NED.df = twListToDF(NED.list) 
 
+# Import all other libraries
 library (plyr)
 library (stringr)
-
+#Generate the function
 score.sentiment = function(sentences, pos.words, neg.words,.progress='none')  
 {  
   require(plyr)  
@@ -85,11 +92,13 @@ pos.words = c(hu.liu.pos, 'upgrade', 'awsum')
 neg.words = c(hu.liu.neg, 'wtf', 'wait','waiting', 'epicfail', 'mechanical',"suspension","no")
 team = c("vs.","vs","versus")
 
+#convert text to factor
 ARG.df$text<-as.factor(ARG.df$text)
 BRA.df$text<-as.factor(BRA.df$text)
 NED.df$text<-as.factor(NED.df$text)
 GER.df$text<-as.factor(GER.df$text)
 
+#calculate all the scores
 ARG.scores = score.sentiment(ARG.df$text, pos.words,neg.words, .progress='text')
 BRA.scores = score.sentiment(BRA.df$text, pos.words,neg.words, .progress='text')
 
@@ -102,11 +111,13 @@ BRA.scores$Team = 'Brazil'
 NED.scores$Team = 'Netherland'
 GER.scores$Team = 'Germany'
 
-
+#Check the negative tweets. What made them negative
 ARG.scores.2 = subset(ARG.scores,ARG.scores$score < 0)
 
 head(ARG.scores.2)
 
+
+# Final outputs
 hist(ARG.scores$score)
 
 hist(BRA.scores$score)
